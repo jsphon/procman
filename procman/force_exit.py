@@ -17,4 +17,4 @@ def force_exit(delay=1.0):
 
 
 if __name__=='__main__':
-    force_exit(1)
+    force_exit(10)
