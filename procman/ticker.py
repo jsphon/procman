@@ -7,18 +7,22 @@ class Ticker(threading.Thread):
         super(Ticker, self).__init__()
         self.callback = callback
         self.delay = delay
+        self.isRunning = False
 
     def run(self):
 
-        while True:
+        self.isRunning = True
+        while self.isRunning:
             if self.callback:
                 try:
                     self.callback()
                 except Exception as e:
                     print(e)
             sleep_time = self.delay - (time.time() % self.delay)
-            print(time.time())
             time.sleep(sleep_time)
+
+    def stop(self):
+        self.isRunning = False
 
 
 class StoppableTicker(object):
@@ -38,15 +42,18 @@ class StoppableTicker(object):
         sleep_time = self.delay - (time.time() % self.delay)
         self.timer = threading.Timer(sleep_time, self.run)
         self.timer.start()
-        print(time.time())
 
     def stop(self):
         self.timer.cancel()
 
 
 if __name__ == '__main__':
-    ticker = StoppableTicker(delay=0.5)
-    ticker.run()
+
+    def exampleCallback():
+        print('callback at %s' % str(time.time()))
+
+    ticker = Ticker(delay=0.5, callback=exampleCallback)
+    ticker.start()
 
     time.sleep(2)
 
